@@ -1,0 +1,21 @@
+Windows Registry Editor Version 5.00
+
+
+[HKEY_CLASSES_ROOT\*\shell\takeownership]
+@="Take ownership"
+"HasLUAShield"=""
+"NoWorkingDirectory"=""
+
+[HKEY_CLASSES_ROOT\*\shell\takeownership\command]
+@="cmd.exe /c takeown /f \"%1\" /d Y && icacls \"%1\" /grant administrators:F /c"
+"IsolatedCommand"="cmd.exe /c takeown /f \"%1\" /d Y && icacls \"%1\" /grant administrators:F /c"
+
+
+[HKEY_CLASSES_ROOT\Directory\shell\takeownership]
+@="Take ownership"
+"HasLUAShield"=""
+"NoWorkingDirectory"=""
+
+[HKEY_CLASSES_ROOT\Directory\shell\takeownership\command]
+@="cmd.exe /c takeown /f \"%1\" /r /d Y && icacls \"%1\" /grant Administrators:F /t /c"
+"IsolatedCommand"="cmd.exe /c takeown /f \"%1\" /r /d Y && icacls \"%1\" /grant Administrators:F /t /c"
