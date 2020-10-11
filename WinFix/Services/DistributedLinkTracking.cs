@@ -38,7 +38,7 @@ namespace WinFix.Services
 
         public void Enable(bool Enable)
         {
-            Service.StartStop("TrkWks", Enable, ServiceStartMode.Automatic);
+            Service.EnableDisable("TrkWks", Enable, ServiceStartMode.Automatic);
         }
     }
 }

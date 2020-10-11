@@ -45,11 +45,11 @@ namespace WinFix.Privacy
 
         public void Enable(bool Enable)
         {
-            Service.StartStop("SensorService", !Enable, ServiceStartMode.Manual);
+            Service.EnableDisable("SensorService", !Enable, ServiceStartMode.Manual);
 
-            Service.StartStop("SensrSvc", !Enable, ServiceStartMode.Manual);
+            Service.EnableDisable("SensrSvc", !Enable, ServiceStartMode.Manual);
 
-            Service.StartStop("SensorDataService", !Enable, ServiceStartMode.Manual);
+            Service.EnableDisable("SensorDataService", !Enable, ServiceStartMode.Manual);
 
             string key = @"HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows\LocationAndSensors";
 

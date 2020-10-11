@@ -47,27 +47,27 @@ namespace WinFix.Services
 
         public void Enable(bool Enable)
         {
-            Service.StartStop("diagsvc", Enable, ServiceStartMode.Manual);
+            Service.EnableDisable("diagsvc", Enable, ServiceStartMode.Manual);
 
-            Service.StartStop("DPS", Enable, ServiceStartMode.Automatic);
+            Service.EnableDisable("DPS", Enable, ServiceStartMode.Automatic);
 
-            Service.StartStop("WdiServiceHost", Enable, ServiceStartMode.Manual);
+            Service.EnableDisable("WdiServiceHost", Enable, ServiceStartMode.Manual);
 
-            Service.StartStop("WdiSystemHost", Enable, ServiceStartMode.Manual);
+            Service.EnableDisable("WdiSystemHost", Enable, ServiceStartMode.Manual);
 
             if (!Enable)
             {
-                Service.StartStop("DiagTrack", Enable, ServiceStartMode.Automatic);                             // ALSO FOR TELEMETRY !!
+                Service.EnableDisable("DiagTrack", Enable, ServiceStartMode.Automatic);                             // ALSO FOR TELEMETRY !!
 
-                Service.StartStop("dmwappushsvc", Enable, ServiceStartMode.Manual);                             // ALSO FOR TELEMETRY !!
+                Service.EnableDisable("dmwappushsvc", Enable, ServiceStartMode.Manual);                             // ALSO FOR TELEMETRY !!
 
-                Service.StartStop("diagnosticshub.standardcollector.service", Enable, ServiceStartMode.Manual); // ALSO FOR TELEMETRY !!
+                Service.EnableDisable("diagnosticshub.standardcollector.service", Enable, ServiceStartMode.Manual); // ALSO FOR TELEMETRY !!
 
                 string key = @"HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows\AppCompat";
                 //RegEdit.SetValue(key, "DisableUAR", 1);     // Steps Recorder
                 RegEdit.SetValue(key, "DisableInventory", 1); // Inventory Collector
 
-                Dir.Delete(@"C:\ProgramData\Microsoft\Diagnosis\ETLLogs");
+                Dir.DeleteDir(@"C:\ProgramData\Microsoft\Diagnosis\ETLLogs");
 
                 RegEdit.SetValue(
                     @"HKEY_LOCAL_MACHINE\System\CurrentControlSet\Control\WMI\Autologger\AutoLogger-Diagtrack-Listener",
@@ -80,7 +80,7 @@ namespace WinFix.Services
              */
             RegEdit.SetValue(@"HKEY_CURRENT_USER\Software\Microsoft\Siuf\Rules", "NumberOfSIUFInPeriod", 0);
 
-            Service.StartStop("pla", Enable, ServiceStartMode.Manual);
+            Service.EnableDisable("pla", Enable, ServiceStartMode.Manual);
         }
     }
 }

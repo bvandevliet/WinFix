@@ -36,7 +36,7 @@ namespace WinFix.Services
 
         public void Enable(bool Enable)
         {
-            Service.StartStop("Dusmsvc", Enable, ServiceStartMode.Automatic);
+            Service.EnableDisable("Dusmsvc", Enable, ServiceStartMode.Automatic);
         }
     }
 }

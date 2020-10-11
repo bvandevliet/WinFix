@@ -41,7 +41,7 @@ namespace WinFix.Services
 
         public void Enable(bool Enable)
         {
-            Service.StartStop("PcaSvc", Enable, ServiceStartMode.Automatic);
+            Service.EnableDisable("PcaSvc", Enable, ServiceStartMode.Automatic);
 
             string key = @"HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows\AppCompat";
 

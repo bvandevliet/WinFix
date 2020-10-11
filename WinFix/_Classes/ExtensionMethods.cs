@@ -6,7 +6,7 @@ namespace ExtensionsRegex
 {
     public static class BeforeAndIncluding
     {
-        private static string _Output(string Input, string Pattern, RegexOptions options)
+        private static string Output(string Input, string Pattern, RegexOptions options)
         {
             return Regex.Match(Input, $@"^.*?{Pattern}", options).Value;
         }
@@ -20,7 +20,7 @@ namespace ExtensionsRegex
         }
         public static string StringBeforeAndIncludingFirstOccurenceOf(this string Input, string Pattern, RegexOptions options)
         {
-            return _Output(Input, Pattern, options);
+            return Output(Input, Pattern, options);
         }
 
         /*
@@ -32,13 +32,13 @@ namespace ExtensionsRegex
         }
         public static string StringBeforeAndIncludingLastOccurenceOf(this string Input, string Pattern, RegexOptions options)
         {
-            return _Output(Input, Pattern, options | RegexOptions.RightToLeft);
+            return Output(Input, Pattern, options | RegexOptions.RightToLeft);
         }
     }
 
     public static class BeforeAndExcluding
     {
-        private static string _Output(string Input, string Pattern, RegexOptions options)
+        private static string Output(string Input, string Pattern, RegexOptions options)
         {
             return Regex.Match(Input, $@"^.*?(?={Pattern})", options).Value;
         }
@@ -52,7 +52,7 @@ namespace ExtensionsRegex
         }
         public static string StringBeforeFirstOccurenceOf(this string Input, string Pattern, RegexOptions options)
         {
-            return _Output(Input, Pattern, options);
+            return Output(Input, Pattern, options);
         }
 
         /*
@@ -64,13 +64,13 @@ namespace ExtensionsRegex
         }
         public static string StringBeforeLastOccurenceOf(this string Input, string Pattern, RegexOptions options)
         {
-            return _Output(Input, Pattern, options | RegexOptions.RightToLeft);
+            return Output(Input, Pattern, options | RegexOptions.RightToLeft);
         }
     }
 
     public static class AfterAndIncluding
     {
-        private static string _Output(string Input, string Pattern, RegexOptions options)
+        private static string Output(string Input, string Pattern, RegexOptions options)
         {
             return Regex.Match(Input, $@"{Pattern}.*?$", options).Value;
         }
@@ -84,7 +84,7 @@ namespace ExtensionsRegex
         }
         public static string StringAfterAndIncludingFirstOccurenceOf(this string Input, string Pattern, RegexOptions options)
         {
-            return _Output(Input, Pattern, options);
+            return Output(Input, Pattern, options);
         }
 
         /*
@@ -96,13 +96,13 @@ namespace ExtensionsRegex
         }
         public static string StringAfterAndIncludingLastOccurenceOf(this string Input, string Pattern, RegexOptions options)
         {
-            return _Output(Input, Pattern, options | RegexOptions.RightToLeft);
+            return Output(Input, Pattern, options | RegexOptions.RightToLeft);
         }
     }
 
     public static class AfterAndExcluding
     {
-        private static string _Output(string Input, string Pattern, RegexOptions options)
+        private static string Output(string Input, string Pattern, RegexOptions options)
         {
             return Regex.Match(Input, $@"(?<={Pattern}).*?$", options).Value;
         }
@@ -116,7 +116,7 @@ namespace ExtensionsRegex
         }
         public static string StringAfterFirstOccurenceOf(this string Input, string Pattern, RegexOptions options)
         {
-            return _Output(Input, Pattern, options);
+            return Output(Input, Pattern, options);
         }
 
         /*
@@ -128,7 +128,7 @@ namespace ExtensionsRegex
         }
         public static string StringAfterLastOccurenceOf(this string Input, string Pattern, RegexOptions options)
         {
-            return _Output(Input, Pattern, options | RegexOptions.RightToLeft);
+            return Output(Input, Pattern, options | RegexOptions.RightToLeft);
         }
     }
 
@@ -314,24 +314,24 @@ namespace ExtensionsIO
             }
         }
 
-        public static bool Delete(string FullPath)
+        public static bool DeleteDir(string FullPath)
         {
-            return Delete(new DirectoryInfo(FullPath));
+            return DeleteDir(new DirectoryInfo(FullPath));
         }
-        public static bool Delete(this DirectoryInfo Folder)
+        public static bool DeleteDir(this DirectoryInfo dirInfo)
         {
             bool success = true;
 
-            if (!Folder.Exists)
+            if (!dirInfo.Exists)
             {
                 return success;
             }
 
-            foreach (FileInfo file in Folder.GetFiles())
+            foreach (FileInfo fileInfo in dirInfo.GetFiles())
             {
                 try
                 {
-                    file.Delete();
+                    fileInfo.Delete();
                 }
                 catch (Exception)
                 {
@@ -339,14 +339,14 @@ namespace ExtensionsIO
                 }
             }
 
-            foreach (DirectoryInfo subfolder in Folder.GetDirectories("*", SearchOption.TopDirectoryOnly))
+            foreach (DirectoryInfo subdirInfo in dirInfo.GetDirectories("*", SearchOption.TopDirectoryOnly))
             {
-                success = success && Delete(subfolder);
+                success = success && DeleteDir(subdirInfo);
             }
 
             try
             {
-                Folder.Delete();
+                dirInfo.Delete();
                 //Console.WriteLine($"Deleted \"{Folder.FullName}\"");
             }
             catch (Exception Ex)
@@ -370,27 +370,27 @@ namespace ExtensionsIO
         {
             RenameItems(new DirectoryInfo(FullPath), PatternToReplace, ReplaceWith, Mode, Recurse);
         }
-        public static void RenameItems(this DirectoryInfo Folder, string PatternToReplace, string ReplaceWith, RenameMode Mode = RenameMode.File, bool Recurse = false)
+        public static void RenameItems(this DirectoryInfo dirInfo, string PatternToReplace, string ReplaceWith, RenameMode Mode = RenameMode.File, bool Recurse = false)
         {
-            if (!Folder.Exists)
+            if (!dirInfo.Exists)
             {
                 return;
             }
 
             if (Mode == RenameMode.File || Mode == RenameMode.Both)
             {
-                foreach (FileInfo file in Folder.GetFiles())
+                foreach (FileInfo fileInfo in dirInfo.GetFiles())
                 {
-                    if (Regex.IsMatch(file.Name, PatternToReplace))
+                    if (Regex.IsMatch(fileInfo.Name, PatternToReplace))
                     {
                         /**
                          * Try-catch to avoid an abort, e.g. in case the replacement already matches the output.
                          */
                         try
                         {
-                            string oldFileName = file.FullName.TrimEnd('\\');
-                            string newFileName = Regex.Replace(file.Name, PatternToReplace, ReplaceWith);
-                            file.MoveTo(Path.Combine(file.DirectoryName, newFileName));
+                            string oldFileName = fileInfo.FullName.TrimEnd('\\');
+                            string newFileName = Regex.Replace(fileInfo.Name, PatternToReplace, ReplaceWith);
+                            fileInfo.MoveTo(Path.Combine(fileInfo.DirectoryName, newFileName));
                             //Console.WriteLine($"\n Renamed\n \"{oldFileName}\"\n \"{Path.Combine(file.DirectoryName, newFileName)}\"");
                         }
                         catch (Exception)
@@ -402,16 +402,16 @@ namespace ExtensionsIO
 
             if (Recurse || Mode == RenameMode.Folder || Mode == RenameMode.Both)
             {
-                foreach (DirectoryInfo subfolder in Folder.GetDirectories("*", SearchOption.TopDirectoryOnly))
+                foreach (DirectoryInfo subdirInfo in dirInfo.GetDirectories("*", SearchOption.TopDirectoryOnly))
                 {
                     if (Recurse)
                     {
-                        RenameItems(subfolder, PatternToReplace, ReplaceWith, Mode, true);
+                        RenameItems(subdirInfo, PatternToReplace, ReplaceWith, Mode, true);
                     }
 
                     if (
                         (Mode == RenameMode.Folder || Mode == RenameMode.Both) &&
-                        Regex.IsMatch(subfolder.Name, PatternToReplace)
+                        Regex.IsMatch(subdirInfo.Name, PatternToReplace)
                     )
                     {
                         /**
@@ -419,9 +419,9 @@ namespace ExtensionsIO
                          */
                         try
                         {
-                            string oldFolderName = subfolder.FullName.TrimEnd('\\');
-                            string newFolderName = Regex.Replace(subfolder.Name, PatternToReplace, ReplaceWith);
-                            subfolder.MoveTo(Path.Combine(Folder.FullName, newFolderName));
+                            string oldFolderName = subdirInfo.FullName.TrimEnd('\\');
+                            string newFolderName = Regex.Replace(subdirInfo.Name, PatternToReplace, ReplaceWith);
+                            subdirInfo.MoveTo(Path.Combine(dirInfo.FullName, newFolderName));
                             //Console.WriteLine($"\n Renamed\n \"{oldFolderName}\"\n \"{Path.Combine(Folder.FullName, newFolderName)}\"");
                         }
                         catch (Exception)

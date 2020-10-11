@@ -38,7 +38,7 @@ namespace WinFix.Services
 
         public void Enable(bool Enable)
         {
-            Service.StartStop("WSearch", Enable, ServiceStartMode.Automatic);
+            Service.EnableDisable("WSearch", Enable, ServiceStartMode.Automatic);
 
             RegEdit.SetValue(
                 @"HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Explorer\Search\Preferences",

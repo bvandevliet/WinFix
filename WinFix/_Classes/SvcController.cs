@@ -2,6 +2,7 @@
 using System.ServiceProcess;
 using Microsoft.Win32;
 using System.Runtime.InteropServices;
+using System.Linq;
 
 class Service : IDisposable
 {
@@ -71,52 +72,60 @@ class Service : IDisposable
         }
     }
 
-    public bool Start()
+    public bool Enable()
     {
-        return StartStop(true);
+        return EnableDisable(true);
     }
 
-    public bool Stop()
+    public bool Disable()
     {
-        return StartStop(false);
+        return EnableDisable(false);
     }
 
-    public bool StartStop(bool Enable, bool destroy = false)
+    public bool EnableDisable(bool Enable, bool destroy = false)
     {
-        return StartStop(_serviceController, Enable, DefaultStartMode, destroy);
+        return EnableDisable(_serviceController, Enable, DefaultStartMode, destroy);
     }
 
-    public static bool StartStop(string ServiceName, bool Enable, ServiceStartMode DefaultStartMode, bool destroy = false)
+    public static bool EnableDisable(string ServiceName, bool Enable, ServiceStartMode DefaultStartMode, bool destroy = false)
     {
         using (ServiceController serviceController = new ServiceController(ServiceName))
         {
-            return StartStop(serviceController, Enable, DefaultStartMode, destroy);
+            return EnableDisable(serviceController, Enable, DefaultStartMode, destroy);
         }
     }
 
-    public static bool StartStop(ServiceController serviceController, bool Enable, ServiceStartMode DefaultStartMode, bool destroy = false)
+    public static bool EnableDisable(ServiceController serviceController, bool Enable, ServiceStartMode DefaultStartMode, bool destroy = false)
     {
-        TimeSpan StartStopTimeout = TimeSpan.FromSeconds(15);
-
+        /**
+         * Return early if the service does not exist.
+         */
         try
         {
-            using (RegistryKey key = Registry.LocalMachine.OpenSubKey($@"SYSTEM\CurrentControlSet\Services\{serviceController.ServiceName}", true))
+            if (serviceController.DisplayName == null)
             {
-                if (Enable)
-                {
-                    bool success = ServiceHelper.ChangeStartMode(serviceController, DefaultStartMode);
+                return true;
+            }
+        }
+        catch (Exception)
+        {
+            return true;
+        }
 
+        /**
+         * Try to change start mode, attempt to fallback to registry hack if failed.
+         */
+        if (!ServiceHelper.ChangeStartMode(serviceController, Enable ? DefaultStartMode : ServiceStartMode.Disabled))
+        {
+            try
+            {
+                using (RegistryKey key = Registry.LocalMachine.OpenSubKey($@"SYSTEM\CurrentControlSet\Services\{serviceController.ServiceName}", true))
+                {
                     if (key != null)
                     {
-                        try
-                        {
-                            key.SetValue("Start", (uint)DefaultStartMode, RegistryValueKind.DWord);
-                        }
-                        catch (Exception)
-                        {
-                        }
+                        key.SetValue("Start", Enable ? (uint)DefaultStartMode : (uint)ServiceStartMode.Disabled, RegistryValueKind.DWord);
 
-                        try
+                        if (Enable)
                         {
                             // Restore ImagePath ..
                             string imagePath = (string)key.GetValue("ImagePath.bac");
@@ -126,87 +135,75 @@ class Service : IDisposable
                                 key.DeleteValue("ImagePath.bac");
                             }
                         }
-                        catch (Exception)
+                        else if (destroy)
                         {
+                            // Remove ImagePath ..
+                            string imagePath = (string)key.GetValue("ImagePath");
+                            if (imagePath != null)
+                            {
+                                key.SetValue("ImagePath.bac", imagePath);
+                                key.DeleteValue("ImagePath");
+                            }
                         }
                     }
 
-                    if (GetStatus(serviceController) != ServiceControllerStatus.Running && (uint)DefaultStartMode <= 2)
+                    key?.Close();
+                }
+            }
+            catch (Exception)
+            {
+            }
+
+            /**
+             * Start or stop the service and verify start mode change succeeded.
+             */
+            //TimeSpan StartStopTimeout = TimeSpan.FromSeconds(15);
+            if (Enable)
+            {
+                if (GetStatus(serviceController) != ServiceControllerStatus.Running && (uint)DefaultStartMode <= 2)
+                {
+                    try
                     {
                         serviceController.Start();
-                        serviceController.WaitForStatus(ServiceControllerStatus.Running, StartStopTimeout);
+                        //serviceController.WaitForStatus(ServiceControllerStatus.Running, StartStopTimeout);
                     }
+                    catch (Exception)
+                    {
+                    }
+                }
 
-                    if (GetStartType(serviceController) == DefaultStartMode)
-                    {
-                        return success;
-                    }
-                    else
-                    {
-                        Console.WriteLine($"Failed to enable service \"{serviceController.ServiceName}\"");
-                    }
+                if (GetStartType(serviceController) == DefaultStartMode)
+                {
+                    return true;
                 }
                 else
                 {
-                    bool success = ServiceHelper.ChangeStartMode(serviceController, ServiceStartMode.Disabled);
-
-                    if (key != null)
-                    {
-                        try
-                        {
-                            key.SetValue("Start", (uint)ServiceStartMode.Disabled, RegistryValueKind.DWord);
-                        }
-                        catch (Exception)
-                        {
-                        }
-
-                        if (destroy)
-                        {
-                            try
-                            {
-                                // Remove ImagePath ..
-                                string imagePath = (string)key.GetValue("ImagePath");
-                                if (imagePath != null)
-                                {
-                                    key.SetValue("ImagePath.bac", imagePath);
-                                    key.DeleteValue("ImagePath");
-                                }
-                            }
-                            catch (Exception)
-                            {
-                            }
-                        }
-
-                    }
-
-                    if (GetStatus(serviceController) != ServiceControllerStatus.Stopped)
+                    Console.WriteLine($"Failed to enable service \"{serviceController.ServiceName}\"");
+                }
+            }
+            else
+            {
+                if (GetStatus(serviceController) != ServiceControllerStatus.Stopped)
+                {
+                    try
                     {
                         serviceController.Stop();
-                        serviceController.WaitForStatus(ServiceControllerStatus.Stopped, StartStopTimeout);
+                        //serviceController.WaitForStatus(ServiceControllerStatus.Stopped, StartStopTimeout);
                     }
-
-                    if (!IsEnabled(serviceController))
+                    catch (Exception)
                     {
-                        return success;
-                    }
-                    else
-                    {
-                        if (destroy)
-                        {
-                            Console.WriteLine($"Failed to disable service \"{serviceController.ServiceName}\", but should be disabled after a reboot.");
-                        }
-                        else
-                        {
-                            Console.WriteLine($"Failed to disable service \"{serviceController.ServiceName}\"");
-                        }
                     }
                 }
 
-                key?.Close();
+                if (!IsEnabled(serviceController))
+                {
+                    return true;
+                }
+                else
+                {
+                    Console.WriteLine($"Failed to disable service \"{serviceController.ServiceName}\"");
+                }
             }
-        }
-        catch (Exception)
-        {
         }
 
         return false;
@@ -289,7 +286,14 @@ static class ServiceHelper
 
     public static bool ChangeStartMode(ServiceController serviceController, ServiceStartMode StartMode)
     {
-        var scManagerHandle = OpenSCManager(null, null, SC_MANAGER_ALL_ACCESS);
+        IntPtr scManagerHandle = IntPtr.Zero;
+        try
+        {
+            scManagerHandle = OpenSCManager(null, null, SC_MANAGER_ALL_ACCESS);
+        }
+        catch (Exception)
+        {
+        }
         if (scManagerHandle == IntPtr.Zero)
         {
             return false;
@@ -297,10 +301,17 @@ static class ServiceHelper
             //throw new ExternalException("Open Service Manager Error");
         }
 
-        var serviceHandle = OpenService(
-            scManagerHandle,
-            serviceController.ServiceName,
-            SERVICE_QUERY_CONFIG | SERVICE_CHANGE_CONFIG);
+        IntPtr serviceHandle = IntPtr.Zero;
+        try
+        {
+            serviceHandle = OpenService(
+                scManagerHandle,
+                serviceController.ServiceName,
+                SERVICE_QUERY_CONFIG | SERVICE_CHANGE_CONFIG);
+        }
+        catch (Exception)
+        {
+        }
 
         if (serviceHandle == IntPtr.Zero)
         {
@@ -309,19 +320,26 @@ static class ServiceHelper
             //throw new ExternalException("Open Service Error");
         }
 
-        var result =
-        ChangeServiceConfig(
-            serviceHandle,
-            SERVICE_NO_CHANGE,
-            (uint)StartMode,
-            SERVICE_NO_CHANGE,
-            null,
-            null,
-            IntPtr.Zero,
-            null,
-            null,
-            null,
-            null);
+        var result = false;
+        try
+        {
+            result =
+            ChangeServiceConfig(
+                serviceHandle,
+                SERVICE_NO_CHANGE,
+                (uint)StartMode,
+                SERVICE_NO_CHANGE,
+                null,
+                null,
+                IntPtr.Zero,
+                null,
+                null,
+                null,
+                null);
+        }
+        catch (Exception)
+        {
+        }
 
         if (result == false)
         {
@@ -332,8 +350,14 @@ static class ServiceHelper
             //throw new ExternalException("Could not change service start type: " + win32Exception.Message);
         }
 
-        CloseServiceHandle(serviceHandle);
-        CloseServiceHandle(scManagerHandle);
+        try
+        {
+            CloseServiceHandle(serviceHandle);
+            CloseServiceHandle(scManagerHandle);
+        }
+        catch (Exception)
+        {
+        }
 
         return true;
     }

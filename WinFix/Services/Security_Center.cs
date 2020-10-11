@@ -44,7 +44,7 @@ namespace WinFix.Services
 
         public void Enable(bool Enable)
         {
-            Service.StartStop("wscsvc", Enable, ServiceStartMode.Manual);
+            Service.EnableDisable("wscsvc", Enable, ServiceStartMode.Manual);
 
             RegEdit.SetValue(
                 @"HKEY_CURRENT_USER\Software\Policies\Microsoft\Windows\Explorer",

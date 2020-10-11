@@ -55,7 +55,7 @@ namespace WinFix.Services
 
         public void Enable(bool Enable)
         {
-            Service.StartStop("DoSvc", Enable, ServiceStartMode.Automatic);
+            Service.EnableDisable("DoSvc", Enable, ServiceStartMode.Automatic);
 
             RegEdit.SetValue(
                 @"HKEY_LOCAL_MACHINE\Software\Microsoft\Windows\CurrentVersion\DeliveryOptimization\Config",

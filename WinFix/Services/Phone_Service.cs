@@ -38,11 +38,11 @@ namespace WinFix.Services
 
         public void Enable(bool Enable)
         {
-            Service.StartStop("PhoneSvc", Enable, ServiceStartMode.Manual);
+            Service.EnableDisable("PhoneSvc", Enable, ServiceStartMode.Manual);
 
-            Service.StartStop("SmsRouter", Enable, ServiceStartMode.Manual);
+            Service.EnableDisable("SmsRouter", Enable, ServiceStartMode.Manual);
 
-            Service.StartStop("TapiSrv", Enable, ServiceStartMode.Manual);
+            Service.EnableDisable("TapiSrv", Enable, ServiceStartMode.Manual);
 
             RegEdit.SetValue(
                 @"HKEY_LOCAL_MACHINE\Software\Microsoft\Windows\CurrentVersion\Policies\MobilityCenter",

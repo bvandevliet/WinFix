@@ -34,7 +34,7 @@ namespace WinFix.Privacy
 
         public void Enable(bool Enable)
         {
-            Service.StartStop("RemoteRegistry", !Enable, ServiceStartMode.Disabled);
+            Service.EnableDisable("RemoteRegistry", !Enable, ServiceStartMode.Disabled);
         }
     }
 }

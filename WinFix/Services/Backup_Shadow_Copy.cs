@@ -45,19 +45,19 @@ namespace WinFix.Services
 
         public void Enable(bool Enable)
         {
-            Service.StartStop("SDRSVC", Enable, ServiceStartMode.Manual);
+            Service.EnableDisable("SDRSVC", Enable, ServiceStartMode.Manual);
 
-            Service.StartStop("wbengine", Enable, ServiceStartMode.Manual);
+            Service.EnableDisable("wbengine", Enable, ServiceStartMode.Manual);
 
-            Service.StartStop("VSS", Enable, ServiceStartMode.Manual);
+            Service.EnableDisable("VSS", Enable, ServiceStartMode.Manual);
 
-            Service.StartStop("swprv", Enable, ServiceStartMode.Manual);
+            Service.EnableDisable("swprv", Enable, ServiceStartMode.Manual);
 
-            Service.StartStop("SQLWriter", Enable, ServiceStartMode.Manual); // DEFAULT VALUES NOT FOUND, NEED TO VERIFY !!
+            Service.EnableDisable("SQLWriter", Enable, ServiceStartMode.Manual); // DEFAULT VALUES NOT FOUND, NEED TO VERIFY !!
 
             if (!Enable)
             {
-                Dir.Delete($@"{Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData)}\Microsoft\Windows\FileHistory");
+                Dir.DeleteDir($@"{Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData)}\Microsoft\Windows\FileHistory");
             }
         }
     }

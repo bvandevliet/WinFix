@@ -34,7 +34,7 @@ namespace WinFix.Services
 
         public void Enable(bool Enable)
         {
-            Service.StartStop("SEMgrSvc", Enable, ServiceStartMode.Manual);
+            Service.EnableDisable("SEMgrSvc", Enable, ServiceStartMode.Manual);
         }
     }
 }

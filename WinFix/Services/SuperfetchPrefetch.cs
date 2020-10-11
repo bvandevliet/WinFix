@@ -51,7 +51,7 @@ namespace WinFix.Services
 
         public void Enable(bool Enable)
         {
-            Service.StartStop("SysMain", Enable, ServiceStartMode.Automatic);
+            Service.EnableDisable("SysMain", Enable, ServiceStartMode.Automatic);
 
             string key = @"HKEY_LOCAL_MACHINE\System\CurrentControlSet\Control\Session Manager\Memory Management\PrefetchParameters";
 

@@ -50,9 +50,9 @@ namespace WinFix.Services
 
         public void Enable(bool Enable)
         {
-            Service.StartStop("WerSvc", Enable, ServiceStartMode.Manual);
+            Service.EnableDisable("WerSvc", Enable, ServiceStartMode.Manual);
 
-            Service.StartStop("wercplsupport", Enable, ServiceStartMode.Manual);
+            Service.EnableDisable("wercplsupport", Enable, ServiceStartMode.Manual);
 
             if (!Enable)
             {

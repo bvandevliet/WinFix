@@ -34,7 +34,7 @@ namespace WinFix.Services
 
         public void Enable(bool Enable)
         {
-            Service.StartStop("TabletInputService", Enable, ServiceStartMode.Manual);
+            Service.EnableDisable("TabletInputService", Enable, ServiceStartMode.Manual);
         }
     }
 }

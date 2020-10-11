@@ -39,7 +39,7 @@ namespace WinFix.Privacy
 
         public void Enable(bool Enable)
         {
-            Service.StartStop("WbioSrvc", !Enable, ServiceStartMode.Manual);
+            Service.EnableDisable("WbioSrvc", !Enable, ServiceStartMode.Manual);
 
             RegEdit.SetValue(
                 @"HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Biometrics",

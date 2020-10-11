@@ -51,23 +51,23 @@ namespace WinFix.Services
 
         public void Enable(bool Enable)
         {
-            Service.StartStop("WSService", Enable, ServiceStartMode.Manual); // DEFAULT VALUES NOT VERIFIED !!
+            Service.EnableDisable("WSService", Enable, ServiceStartMode.Manual); // DEFAULT VALUES NOT VERIFIED !!
 
-            Service.StartStop("InstallService", Enable, ServiceStartMode.Manual); // DEFAULT VALUES NOT VERIFIED !!
+            Service.EnableDisable("InstallService", Enable, ServiceStartMode.Manual); // DEFAULT VALUES NOT VERIFIED !!
 
-            Service.StartStop("NcbService", Enable, ServiceStartMode.Manual);
+            Service.EnableDisable("NcbService", Enable, ServiceStartMode.Manual);
 
-            Service.StartStop("UserDataSvc", Enable, ServiceStartMode.Manual);
+            Service.EnableDisable("UserDataSvc", Enable, ServiceStartMode.Manual);
 
-            Service.StartStop("UnistoreSvc", Enable, ServiceStartMode.Manual);
+            Service.EnableDisable("UnistoreSvc", Enable, ServiceStartMode.Manual);
 
-            Service.StartStop("PimIndexMaintenanceSvc", Enable, ServiceStartMode.Manual);
+            Service.EnableDisable("PimIndexMaintenanceSvc", Enable, ServiceStartMode.Manual);
 
-            Service.StartStop("OneSyncSvc", Enable, ServiceStartMode.Automatic);
+            Service.EnableDisable("OneSyncSvc", Enable, ServiceStartMode.Automatic);
 
-            Service.StartStop("DsSvc", Enable, ServiceStartMode.Manual);
+            Service.EnableDisable("DsSvc", Enable, ServiceStartMode.Manual);
 
-            Service.StartStop("MapsBroker", Enable, ServiceStartMode.Automatic);
+            Service.EnableDisable("MapsBroker", Enable, ServiceStartMode.Automatic);
 
             RegEdit.SetValue(
                 @"HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows\Explorer",
@@ -106,7 +106,7 @@ namespace WinFix.Services
                 }
             }
 
-            Dir.Delete($@"{programFiles}\ClassicShell");
+            Dir.DeleteDir($@"{programFiles}\ClassicShell");
 
             if (Enable)
             {
@@ -120,7 +120,7 @@ namespace WinFix.Services
                     @"C:\Windows\SystemApps\Microsoft.Windows.StartMenuExperienceHost_cw5n1h2txyewy"
                 ))
                 {
-                    Dir.Delete(@"C:\Windows\SystemApps\Microsoft.Windows.StartMenuExperienceHost_cw5n1h2txyewy.bak");
+                    Dir.DeleteDir(@"C:\Windows\SystemApps\Microsoft.Windows.StartMenuExperienceHost_cw5n1h2txyewy.bak");
                 }
             }
             else
@@ -208,7 +208,7 @@ namespace WinFix.Services
                         @"C:\Windows\SystemApps\Microsoft.Windows.StartMenuExperienceHost_cw5n1h2txyewy.bak"
                     ))
                     {
-                        Dir.Delete(@"C:\Windows\SystemApps\Microsoft.Windows.StartMenuExperienceHost_cw5n1h2txyewy");
+                        Dir.DeleteDir(@"C:\Windows\SystemApps\Microsoft.Windows.StartMenuExperienceHost_cw5n1h2txyewy");
                     }
 
                     loop++;

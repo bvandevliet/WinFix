@@ -36,8 +36,8 @@ namespace WinFix.Services
 
         public void Enable(bool Enable)
         {
-            Service.StartStop("FontCache", Enable, ServiceStartMode.Automatic);
-            Service.StartStop("FontCache3.0.0.0", Enable, ServiceStartMode.Automatic);
+            Service.EnableDisable("FontCache", Enable, ServiceStartMode.Automatic);
+            Service.EnableDisable("FontCache3.0.0.0", Enable, ServiceStartMode.Automatic);
         }
     }
 }

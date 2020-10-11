@@ -40,7 +40,7 @@ namespace WinFix.Privacy
 
         public void Enable(bool Enable)
         {
-            Service.StartStop("lfsvc", !Enable, ServiceStartMode.Manual);
+            Service.EnableDisable("lfsvc", !Enable, ServiceStartMode.Manual);
 
             string key = @"HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows\LocationAndSensors";
 

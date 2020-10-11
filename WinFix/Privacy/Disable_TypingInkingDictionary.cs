@@ -80,7 +80,7 @@ namespace WinFix.Privacy
                 return;
             }
 
-            Dir.Delete(@"C:\Users\Bob Vandevliet\AppData\Roaming\Microsoft\Spelling");
+            Dir.DeleteDir(@"C:\Users\Bob Vandevliet\AppData\Roaming\Microsoft\Spelling");
         }
     }
 }

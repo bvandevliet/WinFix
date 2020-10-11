@@ -99,11 +99,11 @@ namespace WinFix.Privacy
 
         public void Enable(bool Enable)
         {
-            Service.StartStop("DiagTrack", !Enable, ServiceStartMode.Automatic);                             // ALSO FOR DIAGNOSTIC SVCs !!
+            Service.EnableDisable("DiagTrack", !Enable, ServiceStartMode.Automatic);                             // ALSO FOR DIAGNOSTIC SVCs !!
 
-            Service.StartStop("dmwappushsvc", !Enable, ServiceStartMode.Manual);                             // ALSO FOR DIAGNOSTIC SVCs !!
+            Service.EnableDisable("dmwappushsvc", !Enable, ServiceStartMode.Manual);                             // ALSO FOR DIAGNOSTIC SVCs !!
 
-            Service.StartStop("diagnosticshub.standardcollector.service", !Enable, ServiceStartMode.Manual); // ALSO FOR DIAGNOSTIC SVCs !!
+            Service.EnableDisable("diagnosticshub.standardcollector.service", !Enable, ServiceStartMode.Manual); // ALSO FOR DIAGNOSTIC SVCs !!
 
             RegEdit.SetValue(
                 @"HKEY_LOCAL_MACHINE\System\CurrentControlSet\Control\WMI\Autologger\AutoLogger-Diagtrack-Listener",

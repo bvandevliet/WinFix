@@ -34,7 +34,7 @@ namespace WinFix.Services
 
         public void Enable(bool Enable)
         {
-            Service.StartStop("WFDSConMgrSvc", Enable, ServiceStartMode.Manual);
+            Service.EnableDisable("WFDSConMgrSvc", Enable, ServiceStartMode.Manual);
         }
     }
 }

@@ -72,7 +72,7 @@ namespace WinFix.Privacy
 
                     TakeOwnership.Folder(@"C:\Windows\SystemApps\Microsoft.Windows.Cortana_cw5n1h2txyewy");
 
-                    Dir.Delete(@"C:\Windows\SystemApps\Microsoft.Windows.Cortana_cw5n1h2txyewy");
+                    Dir.DeleteDir(@"C:\Windows\SystemApps\Microsoft.Windows.Cortana_cw5n1h2txyewy");
 
                     loop++;
                 }

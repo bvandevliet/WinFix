@@ -41,7 +41,7 @@ namespace WinFix.Services
 
         public void Enable(bool Enable)
         {
-            Service.StartStop("luafv", Enable, ServiceStartMode.Automatic);
+            Service.EnableDisable("luafv", Enable, ServiceStartMode.Automatic);
 
             RegEdit.SetValue(
                 @"HKEY_LOCAL_MACHINE\Software\Microsoft\Windows\CurrentVersion\Policies\System",

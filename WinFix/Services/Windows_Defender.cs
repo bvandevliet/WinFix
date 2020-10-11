@@ -80,11 +80,11 @@ namespace WinFix.Services
                 "SubmitSamplesConsent", 2
             );
 
-            Service.StartStop("WinDefend", Enable, ServiceStartMode.Automatic, true);
+            Service.EnableDisable("WinDefend", Enable, ServiceStartMode.Automatic, true);
 
-            Service.StartStop("WdNisSvc", Enable, ServiceStartMode.Automatic);
+            Service.EnableDisable("WdNisSvc", Enable, ServiceStartMode.Automatic);
 
-            Service.StartStop("SecurityHealthService", Enable, ServiceStartMode.Automatic);
+            Service.EnableDisable("SecurityHealthService", Enable, ServiceStartMode.Automatic);
         }
     }
 }

@@ -34,9 +34,9 @@ namespace WinFix.Privacy
 
         public void Enable(bool Enable)
         {
-            Service.StartStop("TokenBroker", !Enable, ServiceStartMode.Manual);
+            Service.EnableDisable("TokenBroker", !Enable, ServiceStartMode.Manual);
 
-            Service.StartStop("wlidsvc", !Enable, ServiceStartMode.System);
+            Service.EnableDisable("wlidsvc", !Enable, ServiceStartMode.System);
         }
     }
 }
