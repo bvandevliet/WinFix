@@ -13,10 +13,11 @@ namespace WinFix.Privacy
 {
     class Disable_HiddenShares : _IFeature
     {
-        public string Name => "Disable hidden shares";
+        public string Name => "Disable unauthorized access";
 
         public string Description =>
-            "Disable hidden shared folders to prevent administrators from seeing your files.";
+            "Disable hidden shared folders to prevent administrators from seeing your files" +
+            "\nAnd deny anonymous user access to prevent unauthorized use of your computer.";
 
         public bool Default => false;
 
@@ -28,16 +29,15 @@ namespace WinFix.Privacy
         {
             get
             {
-                if (
+                return
                     RegEdit.IsValue(
                         @"HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\LanmanServer\Parameters",
                         "AutoShareWks", 0
-                    )
-                )
-                {
-                    return true;
-                }
-                return false;
+                    ) &&
+                    RegEdit.IsValue(
+                        @"HKEY_LOCAL_MACHINE\System\CurrentControlSet\Control\Lsa",
+                        "RestrictAnonymous", 1
+                    );
             }
         }
 
@@ -46,6 +46,11 @@ namespace WinFix.Privacy
             RegEdit.SetValue(
                 @"HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\LanmanServer\Parameters",
                 "AutoShareWks", Enable ? 0 : 1
+            );
+
+            RegEdit.SetValue(
+                @"HKEY_LOCAL_MACHINE\System\CurrentControlSet\Control\Lsa",
+                "RestrictAnonymous", Enable ? 1 : 0
             );
         }
     }

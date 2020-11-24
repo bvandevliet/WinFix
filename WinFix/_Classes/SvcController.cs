@@ -228,15 +228,9 @@ class Service : IDisposable
 
     public static bool IsEnabled(ServiceController serviceController)
     {
-        if (
+        return
             GetStartType(serviceController) != ServiceStartMode.Disabled &&
-            null != Registry.GetValue($@"HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\{serviceController.ServiceName}", "ImagePath", null)
-        )
-        {
-            return true;
-        }
-
-        return false;
+            null != Registry.GetValue($@"HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\{serviceController.ServiceName}", "ImagePath", null);
     }
 
 
@@ -312,7 +306,6 @@ static class ServiceHelper
         catch (Exception)
         {
         }
-
         if (serviceHandle == IntPtr.Zero)
         {
             return false;
@@ -340,7 +333,6 @@ static class ServiceHelper
         catch (Exception)
         {
         }
-
         if (result == false)
         {
             return false;
@@ -357,6 +349,7 @@ static class ServiceHelper
         }
         catch (Exception)
         {
+            return false;
         }
 
         return true;

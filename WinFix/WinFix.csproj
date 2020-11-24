@@ -53,6 +53,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Privacy\Disable_ShareAcrossDevices.cs" />
     <Compile Include="Privacy\Disable_TypingInkingDictionary.cs" />
     <Compile Include="Services\TabletInput.cs" />
     <Compile Include="Services\InkWorkspace.cs" />
@@ -73,8 +74,6 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resource1.resx</DependentUpon>
     </Compile>
-    <Compile Include="Privacy\Disable_Anonymous_User_Access.cs" />
-    <Compile Include="Privacy\Disable_WebAccountManager.cs" />
     <Compile Include="Services\UserAccessControl.cs" />
     <Compile Include="Services\Windows_Defender.cs" />
     <Compile Include="Services\SuperfetchPrefetch.cs" />

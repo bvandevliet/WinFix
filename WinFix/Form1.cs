@@ -38,12 +38,11 @@ namespace WinFix
                 new Privacy.Disable_Telemetry(),
                 new Privacy.Disable_Biometry(),
                 new Privacy.Disable_Geolocation(),
-                new Privacy.Disable_WebAccountManager(),
                 new Privacy.Disable_Sensors(),
                 new Privacy.Disable_Experiments(),
-                new Privacy.Disable_Anonymous_User_Access(),
                 new Privacy.Disable_HiddenShares(),
                 new Privacy.Disable_RemoteReg(),
+                new Privacy.Disable_ShareAcrossDevices(),
                 new Privacy.Disable_Inventory(),
                 new Privacy.Disable_WifiSense(),
                 new Privacy.Disable_TypingInkingDictionary(),
@@ -101,7 +100,6 @@ namespace WinFix
                 new Tweaks.TakeOwnership_CM(),
                 new Tweaks.AlwaysShowExtension(),
                 new Tweaks.Remove3DObjectsExplorer(),
-                //Enable NumLock on boot
             };
             Register(Tweaks_items, Tweaks_box);
 

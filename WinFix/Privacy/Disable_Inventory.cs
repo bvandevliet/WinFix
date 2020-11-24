@@ -28,16 +28,11 @@ namespace WinFix.Privacy
         {
             get
             {
-                if (
+                return
                     RegEdit.IsValue(
                         @"HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows\AppCompat",
                         "DisableInventory", 1
-                    )
-                )
-                {
-                    return true;
-                }
-                return false;
+                    );
             }
         }
 

@@ -31,7 +31,8 @@ namespace WinFix.Services
                 return Service.IsEnabled(
                     "PhoneSvc",
                     "SmsRouter",
-                    "TapiSrv"
+                    "TapiSrv",
+                    "icssvc"
                 );
             }
         }
@@ -43,6 +44,8 @@ namespace WinFix.Services
             Service.EnableDisable("SmsRouter", Enable, ServiceStartMode.Manual);
 
             Service.EnableDisable("TapiSrv", Enable, ServiceStartMode.Manual);
+
+            Service.EnableDisable("icssvc", Enable, ServiceStartMode.Manual);
 
             RegEdit.SetValue(
                 @"HKEY_LOCAL_MACHINE\Software\Microsoft\Windows\CurrentVersion\Policies\MobilityCenter",
