@@ -197,13 +197,10 @@ namespace ExtensionsIO
                     try
                     {
                         file.CopyTo(Path.Combine(Destination.ToString(), file.Name), true);
-                        //Console.WriteLine($"Copied \"{file.Name}\"");
                     }
-                    catch (Exception Ex)
+                    catch (Exception)
                     {
                         success = false;
-
-                        Console.WriteLine(Ex);
                     }
                 }
             }
@@ -254,13 +251,10 @@ namespace ExtensionsIO
                     try
                     {
                         file.MoveTo(Path.Combine(Destination.ToString(), file.Name));
-                        //Console.WriteLine($"Moved \"{file.Name}\"");
                     }
-                    catch (Exception Ex)
+                    catch (Exception)
                     {
                         success = false;
-
-                        Console.WriteLine(Ex);
                     }
                 }
             }
@@ -296,11 +290,9 @@ namespace ExtensionsIO
                     try
                     {
                         file.Delete();
-                        //Console.WriteLine($"Deleted \"{file.Name}\"");
                     }
-                    catch (Exception Ex)
+                    catch (Exception)
                     {
-                        Console.WriteLine(Ex);
                     }
                 }
             }
@@ -347,13 +339,10 @@ namespace ExtensionsIO
             try
             {
                 dirInfo.Delete();
-                //Console.WriteLine($"Deleted \"{Folder.FullName}\"");
             }
-            catch (Exception Ex)
+            catch (Exception)
             {
                 success = false;
-
-                Console.WriteLine(Ex);
             }
 
             return success;
@@ -391,7 +380,6 @@ namespace ExtensionsIO
                             string oldFileName = fileInfo.FullName.TrimEnd('\\');
                             string newFileName = Regex.Replace(fileInfo.Name, PatternToReplace, ReplaceWith);
                             fileInfo.MoveTo(Path.Combine(fileInfo.DirectoryName, newFileName));
-                            //Console.WriteLine($"\n Renamed\n \"{oldFileName}\"\n \"{Path.Combine(file.DirectoryName, newFileName)}\"");
                         }
                         catch (Exception)
                         {
@@ -422,7 +410,6 @@ namespace ExtensionsIO
                             string oldFolderName = subdirInfo.FullName.TrimEnd('\\');
                             string newFolderName = Regex.Replace(subdirInfo.Name, PatternToReplace, ReplaceWith);
                             subdirInfo.MoveTo(Path.Combine(dirInfo.FullName, newFolderName));
-                            //Console.WriteLine($"\n Renamed\n \"{oldFolderName}\"\n \"{Path.Combine(Folder.FullName, newFolderName)}\"");
                         }
                         catch (Exception)
                         {

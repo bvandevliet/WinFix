@@ -51,55 +51,18 @@ namespace WinFix.Services
                 "DisableNotificationCenter",
                 Enable ? 0 : 1
             );
+
             RegEdit.SetValue(
                 @"HKEY_CURRENT_USER\Software\Policies\Microsoft\Windows\Explorer",
                 "HideSCAHealth",
                 Enable ? 0 : 1
             );
+
             RegEdit.SetValue(
                 @"HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Notifications\Settings\Windows.SystemToast.SecurityAndMaintenance",
                 "Enabled",
                 Enable ? 1 : 0
             );
-
-            if (Enable)
-            {
-                TakeOwnership.File(@"C:\Windows\System32\ActionCenter.dll.bak");
-
-                try
-                {
-                    File.Move(
-                        @"C:\Windows\System32\ActionCenter.dll.bak",
-                        @"C:\Windows\System32\ActionCenter.dll"
-                    );
-                }
-                catch (FileNotFoundException)
-                {
-                }
-                catch (Exception)
-                {
-                    Console.WriteLine("Failed to (re)enable Action Center, notifications might not be shown!");
-                }
-            }
-            else
-            {
-                TakeOwnership.File(@"C:\Windows\System32\ActionCenter.dll");
-
-                try
-                {
-                    File.Move(
-                        @"C:\Windows\System32\ActionCenter.dll",
-                        @"C:\Windows\System32\ActionCenter.dll.bak"
-                    );
-                }
-                catch (FileNotFoundException)
-                {
-                }
-                catch (Exception)
-                {
-                    //Console.WriteLine("Failed to disable Action Center, annoying messages about Security Center may still occur!"); // this true ??
-                }
-            }
         }
     }
 }

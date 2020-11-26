@@ -169,6 +169,7 @@ class Service : IDisposable
                     }
                     catch (Exception)
                     {
+                        //Console.WriteLine($"\nCould not start \"{serviceController.DisplayName}\" service.");
                     }
                 }
 
@@ -192,6 +193,7 @@ class Service : IDisposable
                     }
                     catch (Exception)
                     {
+                        //Console.WriteLine($"\nCould not stop \"{serviceController.DisplayName}\" service.");
                     }
                 }
 

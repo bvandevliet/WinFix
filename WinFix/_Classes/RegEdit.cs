@@ -31,7 +31,7 @@ static class RegEdit
         }
         catch (Exception Ex)
         {
-            Console.WriteLine(Ex.Message);
+            //Console.WriteLine(Ex.Message);
         }
     }
 }

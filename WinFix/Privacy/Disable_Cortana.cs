@@ -28,6 +28,10 @@ namespace WinFix.Privacy
                         @"HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows\Windows Search",
                         "AllowCortana", 0
                     ) &&
+                    RegEdit.IsValue(
+                        @"HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Cortana",
+                        "IsAvailable", 0
+                    ) &&
                     !Directory.Exists(@"C:\Windows\SystemApps\Microsoft.Windows.Cortana_cw5n1h2txyewy");
             }
         }
@@ -39,6 +43,21 @@ namespace WinFix.Privacy
             RegEdit.SetValue(
                 @"HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows\Windows Search",
                 "AllowCortana", Enable ? 0 : 1
+            );
+
+            RegEdit.SetValue(
+                @"HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Cortana",
+                "IsAvailable", Enable ? 0 : 1
+            );
+
+            RegEdit.SetValue(
+                @"HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced",
+                "ShowCortanaButton", Enable ? 0 : 1
+            );
+
+            RegEdit.SetValue(
+                @"HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Search",
+                "SearchboxTaskbarMode", Enable ? 0 : 1
             );
 
             /**
@@ -54,7 +73,7 @@ namespace WinFix.Privacy
 
                 int loop = 0;
 
-                while (Directory.Exists(@"C:\Windows\SystemApps\Microsoft.Windows.Cortana_cw5n1h2txyewy") && loop < 50)
+                while (Directory.Exists(@"C:\Windows\SystemApps\Microsoft.Windows.Cortana_cw5n1h2txyewy") && loop < 20)
                 {
                     Process[] searchProcesses = Process.GetProcessesByName("SearchUI");
 
@@ -70,33 +89,25 @@ namespace WinFix.Privacy
                         }
                     }
 
-                    TakeOwnership.Folder(@"C:\Windows\SystemApps\Microsoft.Windows.Cortana_cw5n1h2txyewy");
+                    try
+                    {
+                        if (loop % 2 == 0)
+                        {
+                            TakeOwnership.Folder(@"C:\Windows\SystemApps\Microsoft.Windows.Cortana_cw5n1h2txyewy");
+                        }
 
-                    Dir.DeleteDir(@"C:\Windows\SystemApps\Microsoft.Windows.Cortana_cw5n1h2txyewy");
+                        Dir.DeleteDir(@"C:\Windows\SystemApps\Microsoft.Windows.Cortana_cw5n1h2txyewy");
+                    }
+                    catch (Exception)
+                    {
+                    }
 
                     loop++;
                 }
 
-                if (loop == 50)
+                if (loop == 20)
                 {
-                    Console.WriteLine("Failed to disable \"Cortana\"!");
-                }
-                else
-                {
-                    RegEdit.SetValue(
-                        @"HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Cortana",
-                        "IsAvailable", 0
-                    );
-
-                    RegEdit.SetValue(
-                        @"HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced",
-                        "ShowCortanaButton", 0
-                    );
-
-                    RegEdit.SetValue(
-                        @"HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Search",
-                        "SearchboxTaskbarMode", 0
-                    );
+                    Console.WriteLine("Failed to properly disable \"Cortana\"!");
                 }
             }
 
@@ -113,21 +124,6 @@ namespace WinFix.Privacy
                 {
                     Commands.InvokePS("Get-AppxPackage -AllUsers Microsoft.549981C3F5F10 | Foreach {Add-AppxPackage -DisableDevelopmentMode -Register \"$($_.InstallLocation)\\AppXManifest.xml\"}");   // >= 2004
                 }
-
-                RegEdit.SetValue(
-                    @"HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Cortana",
-                    "IsAvailable", 1
-                );
-
-                RegEdit.SetValue(
-                    @"HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced",
-                    "ShowCortanaButton", 1
-                );
-
-                RegEdit.SetValue(
-                    @"HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Search",
-                    "SearchboxTaskbarMode", 1
-                );
             }
         }
     }

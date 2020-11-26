@@ -30,9 +30,7 @@ namespace WinFix.Services
         {
             get
             {
-                return
-                    Process.GetProcessesByName("SearchUI").Length != 0 ||
-                    Service.IsEnabled("WSearch");
+                return Service.IsEnabled("WSearch");
             }
         }
 

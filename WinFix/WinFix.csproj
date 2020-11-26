@@ -78,7 +78,7 @@
     <Compile Include="Services\Windows_Defender.cs" />
     <Compile Include="Services\SuperfetchPrefetch.cs" />
     <Compile Include="Services\DistributedLinkTracking.cs" />
-    <Compile Include="Services\StoreAppsClassicShell.cs" />
+    <Compile Include="Services\OpenShell.cs" />
     <Compile Include="Services\Windows_Search.cs" />
     <Compile Include="Performance\Disable_AutolaunchDelay.cs" />
     <Compile Include="Privacy\Disable_HiddenShares.cs" />
