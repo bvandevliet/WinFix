@@ -73,7 +73,6 @@ namespace WinFix
                 new Services.Security_Center(),
                 new Services.Windows_Defender(),
                 new Services.Windows_Search(),
-                new Services.OpenShell(),
             };
             Register(ServicesFeatures_items, ServicesFeatures_box);
 

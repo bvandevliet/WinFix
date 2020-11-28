@@ -20,7 +20,7 @@ namespace WinFix.Tweaks
 
         public bool Default => false;
 
-        public dynamic Recommended => null;
+        public dynamic Recommended => true;
 
         public bool Optimized => true;
 

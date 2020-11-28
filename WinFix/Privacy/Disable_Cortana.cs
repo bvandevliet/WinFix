@@ -1,8 +1,8 @@
 ﻿using ExtensionsIO;
+using Microsoft.Win32;
 using System;
-using System.IO;
 using System.Diagnostics;
-//using System.Management.Automation;
+using System.IO;
 
 namespace WinFix.Privacy
 {
@@ -11,7 +11,7 @@ namespace WinFix.Privacy
         public string Name => "Disable Cortana";
 
         public string Description =>
-            "Disable Cortana and improve your privacy.";
+            "Disable Cortana and improve your privacy. I recommend to install Open-Shell as the search functionality in Start Menu will break.";
 
         public bool Default => false;
 
@@ -38,8 +38,6 @@ namespace WinFix.Privacy
 
         public void Enable(bool Enable)
         {
-            dynamic WinVer = Microsoft.Win32.Registry.GetValue(@"HKEY_LOCAL_MACHINE\Software\Microsoft\Windows NT\CurrentVersion", "ReleaseId", 0);
-
             RegEdit.SetValue(
                 @"HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows\Windows Search",
                 "AllowCortana", Enable ? 0 : 1
@@ -55,25 +53,22 @@ namespace WinFix.Privacy
                 "ShowCortanaButton", Enable ? 0 : 1
             );
 
-            RegEdit.SetValue(
-                @"HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Search",
-                "SearchboxTaskbarMode", Enable ? 0 : 1
-            );
+            //RegEdit.SetValue(
+            //    @"HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Search",
+            //    "SearchboxTaskbarMode", Enable ? 0 : 1
+            //);
 
-            /**
-             * DISABLE CORTANA ..
-             */
             if (Enable)
             {
                 /**
-                 * Just try to remove both versions.
-                 */
+                     * Remove Cortana ..
+                     */
                 Commands.InvokePS("Get-AppxPackage -AllUsers Microsoft.Windows.Cortana | Remove-AppxPackage"); // <= 1909
                 Commands.InvokePS("Get-AppxPackage -AllUsers Microsoft.549981C3F5F10 | Remove-AppxPackage");   // >= 2004
 
-                int loop = 0;
+                int loop_cortana = 0;
 
-                while (Directory.Exists(@"C:\Windows\SystemApps\Microsoft.Windows.Cortana_cw5n1h2txyewy") && loop < 20)
+                while (Directory.Exists(@"C:\Windows\SystemApps\Microsoft.Windows.Cortana_cw5n1h2txyewy") && loop_cortana < 20)
                 {
                     Process[] searchProcesses = Process.GetProcessesByName("SearchUI");
 
@@ -91,7 +86,7 @@ namespace WinFix.Privacy
 
                     try
                     {
-                        if (loop % 2 == 0)
+                        if (loop_cortana % 2 == 0)
                         {
                             TakeOwnership.Folder(@"C:\Windows\SystemApps\Microsoft.Windows.Cortana_cw5n1h2txyewy");
                         }
@@ -102,20 +97,65 @@ namespace WinFix.Privacy
                     {
                     }
 
-                    loop++;
+                    loop_cortana++;
                 }
 
-                if (loop == 20)
+                if (loop_cortana >= 20)
                 {
                     Console.WriteLine("Failed to properly disable \"Cortana\"!");
                 }
-            }
 
-            /**
-             * ENABLE CORTANA ..
-             */
+                /**
+                 * Remove SearchApp ..
+                 */
+                Commands.InvokePS("Get-AppxPackage -AllUsers Microsoft.Windows.Search | Remove-AppxPackage");
+
+                int loop_searchapp = 0;
+
+                while (Directory.Exists(@"Microsoft.Windows.Search_cw5n1h2txyewy") && loop_searchapp < 20)
+                {
+                    Process[] searchProcesses = Process.GetProcessesByName("SearchApp");
+
+                    foreach (Process searchProcess in searchProcesses)
+                    {
+                        try
+                        {
+                            searchProcess.Kill();
+                        }
+                        catch (Exception)
+                        {
+                            Commands.taskkill("SearchApp");
+                        }
+                    }
+
+                    try
+                    {
+                        if (loop_searchapp % 2 == 0)
+                        {
+                            TakeOwnership.Folder(@"Microsoft.Windows.Search_cw5n1h2txyewy");
+                        }
+
+                        Dir.DeleteDir(@"Microsoft.Windows.Search_cw5n1h2txyewy");
+                    }
+                    catch (Exception)
+                    {
+                    }
+
+                    loop_searchapp++;
+                }
+
+                if (loop_searchapp >= 20)
+                {
+                    Console.WriteLine("Failed to properly disable \"Search App\"!");
+                }
+            }
             else
             {
+                dynamic WinVer = Registry.GetValue(@"HKEY_LOCAL_MACHINE\Software\Microsoft\Windows NT\CurrentVersion", "ReleaseId", 0);
+
+                /**
+                 * Re-enable Cortana ..
+                 */
                 if ((int)WinVer <= 1909)
                 {
                     Commands.InvokePS("Get-AppxPackage -AllUsers Microsoft.Windows.Cortana | Foreach {Add-AppxPackage -DisableDevelopmentMode -Register \"$($_.InstallLocation)\\AppXManifest.xml\"}"); // <= 1909
@@ -124,6 +164,11 @@ namespace WinFix.Privacy
                 {
                     Commands.InvokePS("Get-AppxPackage -AllUsers Microsoft.549981C3F5F10 | Foreach {Add-AppxPackage -DisableDevelopmentMode -Register \"$($_.InstallLocation)\\AppXManifest.xml\"}");   // >= 2004
                 }
+
+                /**
+                 * Re-enable SearchApp ..
+                 */
+                Commands.InvokePS("Get-AppxPackage -AllUsers Microsoft.Windows.Search | Foreach {Add-AppxPackage -DisableDevelopmentMode -Register \"$($_.InstallLocation)\\AppXManifest.xml\"}");
             }
         }
     }

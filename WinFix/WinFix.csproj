@@ -69,16 +69,10 @@
     <Compile Include="_Classes\RegEdit.cs" />
     <Compile Include="_Classes\Commands.cs" />
     <Compile Include="_Classes\TextBoxStreamWriter.cs" />
-    <Compile Include="ClassicShell\Resource1.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Resource1.resx</DependentUpon>
-    </Compile>
     <Compile Include="Services\UserAccessControl.cs" />
     <Compile Include="Services\Windows_Defender.cs" />
     <Compile Include="Services\SuperfetchPrefetch.cs" />
     <Compile Include="Services\DistributedLinkTracking.cs" />
-    <Compile Include="Services\OpenShell.cs" />
     <Compile Include="Services\Windows_Search.cs" />
     <Compile Include="Performance\Disable_AutolaunchDelay.cs" />
     <Compile Include="Privacy\Disable_HiddenShares.cs" />
@@ -128,18 +122,11 @@
     <None Include="app.manifest">
       <SubType>Designer</SubType>
     </None>
-    <None Include="ClassicShell\Open-Shell.zip" />
-    <None Include="ClassicShell\Settings.reg" />
     <None Include="Regedit\service_defaults_2004_19041.450.reg" />
     <None Include="Regedit\TakeOwnership_add.reg" />
     <None Include="Regedit\TakeOwnership_remove.reg" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="ClassicShell\Resource1.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resource1.Designer.cs</LastGenOutput>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
     <EmbeddedResource Include="Form1.resx">
       <DependentUpon>Form1.cs</DependentUpon>
     </EmbeddedResource>

@@ -20,7 +20,7 @@ namespace WinFix.Privacy
 
         public bool Default => false;
 
-        public dynamic Recommended => true;
+        public dynamic Recommended => null;
 
         public bool Optimized => true;
 

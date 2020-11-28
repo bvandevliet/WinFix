@@ -20,7 +20,7 @@ namespace WinFix.Services
 
         public bool Default => true;
 
-        public dynamic Recommended => null;
+        public dynamic Recommended => false;
 
         public bool Optimized => false;
 

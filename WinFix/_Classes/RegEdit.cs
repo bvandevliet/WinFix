@@ -29,7 +29,7 @@ static class RegEdit
         {
             Registry.SetValue(keyName, valueName, value);
         }
-        catch (Exception Ex)
+        catch (Exception)
         {
             //Console.WriteLine(Ex.Message);
         }
