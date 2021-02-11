@@ -35,6 +35,11 @@ namespace WinFix.Privacy
         public void Enable(bool Enable)
         {
             Service.EnableDisable("RemoteRegistry", !Enable, ServiceStartMode.Disabled);
+
+            RegEdit.SetValue(
+                @"HKEY_LOCAL_MACHINE\System\CurrentControlSet\Control\Remote Assistance",
+                "fAllowToGetHelp", 0 // screenshot 6 - put tweak somewhere else !!
+            );
         }
     }
 }

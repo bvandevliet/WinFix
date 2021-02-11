@@ -85,6 +85,7 @@ namespace WinFix
                 new Performance.Disable_BackgroundApps(),
                 new Performance.Enhance_NTFS(),
                 new Performance.Run_ExplorerSeparate(),
+                new Performance.Disable_Hibernate(),
             };
             Register(PerformanceStability_items, PerformanceStability_box);
 

@@ -53,6 +53,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Performance\Disable_Hibernate.cs" />
     <Compile Include="Privacy\Disable_ShareAcrossDevices.cs" />
     <Compile Include="Privacy\Disable_TypingInkingDictionary.cs" />
     <Compile Include="Services\TabletInput.cs" />

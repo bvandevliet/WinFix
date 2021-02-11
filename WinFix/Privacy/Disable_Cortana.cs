@@ -149,26 +149,34 @@ namespace WinFix.Privacy
                     Console.WriteLine("Failed to properly disable \"Search App\"!");
                 }
             }
-            else
+            else // if !Enable
             {
                 dynamic WinVer = Registry.GetValue(@"HKEY_LOCAL_MACHINE\Software\Microsoft\Windows NT\CurrentVersion", "ReleaseId", 0);
 
                 /**
                  * Re-enable Cortana ..
                  */
-                if ((int)WinVer <= 1909)
+                try
                 {
-                    Commands.InvokePS("Get-AppxPackage -AllUsers Microsoft.Windows.Cortana | Foreach {Add-AppxPackage -DisableDevelopmentMode -Register \"$($_.InstallLocation)\\AppXManifest.xml\"}"); // <= 1909
+                    if ((int)WinVer <= 1909)
+                    {
+                        Commands.InvokePS("Get-AppxPackage -AllUsers Microsoft.Windows.Cortana | Foreach {Add-AppxPackage -DisableDevelopmentMode -Register \"$($_.InstallLocation)\\AppXManifest.xml\"}"); // <= 1909
+                    }
+                    else
+                    {
+                        Commands.InvokePS("Get-AppxPackage -AllUsers Microsoft.549981C3F5F10 | Foreach {Add-AppxPackage -DisableDevelopmentMode -Register \"$($_.InstallLocation)\\AppXManifest.xml\"}");   // >= 2004
+                    }
                 }
-                else
-                {
-                    Commands.InvokePS("Get-AppxPackage -AllUsers Microsoft.549981C3F5F10 | Foreach {Add-AppxPackage -DisableDevelopmentMode -Register \"$($_.InstallLocation)\\AppXManifest.xml\"}");   // >= 2004
-                }
+                catch (Exception) { }
 
                 /**
                  * Re-enable SearchApp ..
                  */
-                Commands.InvokePS("Get-AppxPackage -AllUsers Microsoft.Windows.Search | Foreach {Add-AppxPackage -DisableDevelopmentMode -Register \"$($_.InstallLocation)\\AppXManifest.xml\"}");
+                try
+                {
+                    Commands.InvokePS("Get-AppxPackage -AllUsers Microsoft.Windows.Search | Foreach {Add-AppxPackage -DisableDevelopmentMode -Register \"$($_.InstallLocation)\\AppXManifest.xml\"}");
+                }
+                catch (Exception) { }
             }
         }
     }

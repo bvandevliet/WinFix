@@ -75,6 +75,11 @@ namespace WinFix.Privacy
                 "HarvestContacts", Enable ? 0 : 1
             );
 
+            RegEdit.SetValue(
+                @"HKEY_CURRENT_USER\Control Panel\International\User Profile",
+                "HttpAcceptLanguageOptOut", 1 // screenshot 1 - put tweak somewhere else !!
+            );
+
             if (!Enable)
             {
                 return;

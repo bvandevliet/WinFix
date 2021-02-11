@@ -4,44 +4,16 @@ using Microsoft.Win32;
 using System.Runtime.InteropServices;
 using System.Linq;
 
-class Service : IDisposable
+static class Service
 {
-    private readonly ServiceController _serviceController = null;
-
-    public string ServiceName
+    public static ServiceControllerStatus GetStatus(string serviceName)
     {
-        get => _serviceController.ServiceName;
-    }
-
-    public ServiceStartMode DefaultStartMode
-    {
-        get;
-    }
-
-    public ServiceControllerStatus Status
-    {
-        get => GetStatus(_serviceController);
-    }
-
-    public ServiceStartMode StartType
-    {
-        get => GetStartType(_serviceController);
-    }
-
-    public Service(string ServiceName, ServiceStartMode DefaultStartMode)
-    {
-        _serviceController = new ServiceController(ServiceName);
-        this.DefaultStartMode = DefaultStartMode;
-    }
-
-    public static ServiceControllerStatus GetStatus(string ServiceName)
-    {
-        using (ServiceController serviceController = new ServiceController(ServiceName))
+        using (ServiceController serviceController = new ServiceController(serviceName))
         {
             return GetStatus(serviceController);
         }
     }
-    public static ServiceControllerStatus GetStatus(ServiceController serviceController)
+    private static ServiceControllerStatus GetStatus(ServiceController serviceController)
     {
         try
         {
@@ -53,14 +25,14 @@ class Service : IDisposable
         }
     }
 
-    public static ServiceStartMode GetStartType(string ServiceName)
+    public static ServiceStartMode GetStartType(string serviceName)
     {
-        using (ServiceController serviceController = new ServiceController(ServiceName))
+        using (ServiceController serviceController = new ServiceController(serviceName))
         {
             return GetStartType(serviceController);
         }
     }
-    public static ServiceStartMode GetStartType(ServiceController serviceController)
+    private static ServiceStartMode GetStartType(ServiceController serviceController)
     {
         try
         {
@@ -72,50 +44,31 @@ class Service : IDisposable
         }
     }
 
-    public bool Enable()
-    {
-        return EnableDisable(true);
-    }
-
-    public bool Disable()
-    {
-        return EnableDisable(false);
-    }
-
-    public bool EnableDisable(bool Enable, bool destroy = false)
-    {
-        return EnableDisable(_serviceController, Enable, DefaultStartMode, destroy);
-    }
-
-    public static bool EnableDisable(string ServiceName, bool Enable, ServiceStartMode DefaultStartMode, bool destroy = false)
-    {
-        using (ServiceController serviceController = new ServiceController(ServiceName))
-        {
-            return EnableDisable(serviceController, Enable, DefaultStartMode, destroy);
-        }
-    }
-
-    public static bool EnableDisable(ServiceController serviceController, bool Enable, ServiceStartMode DefaultStartMode, bool destroy = false)
+    public static bool EnableDisable(string serviceName, bool Enable, ServiceStartMode defaultStartMode, bool destroy = false)
     {
         /**
-         * Return early if the service does not exist.
+         * Verify if the service exists or bail early ..
          */
-        try
-        {
-            if (serviceController.DisplayName == null)
-            {
-                return true;
-            }
-        }
-        catch (Exception)
+        ServiceController serviceController =
+            ServiceController.GetServices().FirstOrDefault(sc => sc.ServiceName == serviceName);
+
+        if (serviceController == null)
         {
             return true;
         }
 
+        using (serviceController)
+        {
+            return EnableDisable(serviceController, Enable, defaultStartMode, destroy);
+        }
+    }
+
+    private static bool EnableDisable(ServiceController serviceController, bool Enable, ServiceStartMode defaultStartMode, bool destroy = false)
+    {
         /**
          * Try to change start mode, attempt to fallback to registry hack if failed.
          */
-        if (!ServiceHelper.ChangeStartMode(serviceController, Enable ? DefaultStartMode : ServiceStartMode.Disabled))
+        if (!ServiceHelper.ChangeStartMode(serviceController, Enable ? defaultStartMode : ServiceStartMode.Disabled))
         {
             try
             {
@@ -123,7 +76,7 @@ class Service : IDisposable
                 {
                     if (key != null)
                     {
-                        key.SetValue("Start", Enable ? (uint)DefaultStartMode : (uint)ServiceStartMode.Disabled, RegistryValueKind.DWord);
+                        key.SetValue("Start", Enable ? (uint)defaultStartMode : (uint)ServiceStartMode.Disabled, RegistryValueKind.DWord);
 
                         if (Enable)
                         {
@@ -160,7 +113,7 @@ class Service : IDisposable
             //TimeSpan StartStopTimeout = TimeSpan.FromSeconds(15);
             if (Enable)
             {
-                if (GetStatus(serviceController) != ServiceControllerStatus.Running && (uint)DefaultStartMode <= 2)
+                if (GetStatus(serviceController) != ServiceControllerStatus.Running && (uint)defaultStartMode <= 2)
                 {
                     try
                     {
@@ -173,7 +126,7 @@ class Service : IDisposable
                     }
                 }
 
-                if (GetStartType(serviceController) == DefaultStartMode)
+                if (GetStartType(serviceController) == defaultStartMode)
                 {
                     return true;
                 }
@@ -212,9 +165,9 @@ class Service : IDisposable
     }
 
 
-    public static bool IsEnabled(params string[] ServiceNames)
+    public static bool IsEnabled(params string[] serviceNames)
     {
-        foreach (string ServiceName in ServiceNames)
+        foreach (string ServiceName in serviceNames)
         {
             using (ServiceController serviceController = new ServiceController(ServiceName))
             {
@@ -228,23 +181,11 @@ class Service : IDisposable
         return false;
     }
 
-    public static bool IsEnabled(ServiceController serviceController)
+    private static bool IsEnabled(ServiceController serviceController)
     {
         return
             GetStartType(serviceController) != ServiceStartMode.Disabled &&
             null != Registry.GetValue($@"HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\{serviceController.ServiceName}", "ImagePath", null);
-    }
-
-
-    ~Service()
-    {
-        Dispose();
-    }
-
-    public void Dispose()
-    {
-        _serviceController?.Close();
-        _serviceController?.Dispose();
     }
 }
 

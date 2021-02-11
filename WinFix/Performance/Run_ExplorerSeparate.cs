@@ -30,7 +30,7 @@ namespace WinFix.Performance
             {
                 string key = @"HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Explorer";
 
-                if (
+                return
                     /**
                      * Desktop ..
                      */
@@ -51,12 +51,7 @@ namespace WinFix.Performance
                     RegEdit.IsValue(
                         $@"{key}\BrowseNewProcess",
                         "BrowseNewProcess", "Yes"
-                    )
-                )
-                {
-                    return true;
-                }
-                return false;
+                    );
             }
         }
 
@@ -75,6 +70,11 @@ namespace WinFix.Performance
             RegEdit.SetValue(
                 $@"{key}\BrowseNewProcess",
                 "BrowseNewProcess", Enable ? "Yes" : "No"
+            );
+
+            RegEdit.SetValue(
+                @"HKEY_CURRENT_USER\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced",
+                "SharingWizardOn", 0 // screenshot 5 - put tweak somewhere else !!
             );
         }
     }

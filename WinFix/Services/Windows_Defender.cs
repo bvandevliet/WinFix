@@ -20,7 +20,7 @@ namespace WinFix.Services
 
         public bool Default => true;
 
-        public dynamic Recommended => null;
+        public dynamic Recommended => true;
 
         public bool Optimized => false;
 
@@ -54,11 +54,11 @@ namespace WinFix.Services
                 Enable ? 0 : 1
             );
 
-            string key = @"HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows Defender\Real-Time Protection";
+            //string key = @"HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows Defender\Real-Time Protection";
 
-            RegEdit.SetValue(key, "DisableBehaviorMonitoring", Enable ? 0 : 1);
-            RegEdit.SetValue(key, "DisableOnAccessProtection", Enable ? 0 : 1);
-            RegEdit.SetValue(key, "DisableScanOnRealtimeEnable", Enable ? 0 : 1);
+            //RegEdit.SetValue(key, "DisableBehaviorMonitoring", Enable ? 0 : 1);
+            //RegEdit.SetValue(key, "DisableOnAccessProtection", Enable ? 0 : 1);
+            //RegEdit.SetValue(key, "DisableScanOnRealtimeEnable", Enable ? 0 : 1);
 
             /**
              * Always disable Microsoft SpyNet participation.
@@ -82,7 +82,7 @@ namespace WinFix.Services
 
             Service.EnableDisable("WinDefend", Enable, ServiceStartMode.Automatic, true);
 
-            Service.EnableDisable("WdNisSvc", Enable, ServiceStartMode.Automatic);
+            Service.EnableDisable("WdNisSvc", Enable, ServiceStartMode.Automatic, true);
 
             Service.EnableDisable("SecurityHealthService", Enable, ServiceStartMode.Automatic);
         }
