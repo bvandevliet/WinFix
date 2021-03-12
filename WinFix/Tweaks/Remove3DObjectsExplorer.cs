@@ -53,29 +53,36 @@ namespace WinFix.Tweaks
             {
                 using (RegistryKey key = Registry.LocalMachine.OpenSubKey(key_str, true))
                 {
-                    key.DeleteSubKeyTree("{0DB7E03F-FC29-4DC6-9020-FF41B59E513A}");
+                    try
+                    {
+                        key.DeleteSubKeyTree("{0DB7E03F-FC29-4DC6-9020-FF41B59E513A}");
+                    }
+                    catch (Exception)
+                    {
+                    }
 
                     foreach (string subkey_str in key.GetSubKeyNames())
                     {
-                        using (RegistryKey subkey = key.OpenSubKey(subkey_str, false))
+                        try
                         {
-                            dynamic name = subkey.GetValue("Name");
-
-                            if (
-                                name != null &&
-                                (string)name == "3D Objects"
-                            )
+                            using (RegistryKey subkey = key.OpenSubKey(subkey_str, false))
                             {
-                                try
+                                if (subkey.GetValue("Name") is string name && name == "3D Objects")
                                 {
-                                    key.DeleteSubKeyTree(subkey_str);
+                                    try
+                                    {
+                                        key.DeleteSubKeyTree(subkey_str);
+                                    }
+                                    catch (Exception)
+                                    {
+                                    }
                                 }
-                                catch (Exception)
-                                {
-                                }
-                            }
 
-                            subkey.Close();
+                                subkey.Close();
+                            }
+                        }
+                        catch (Exception)
+                        {
                         }
                     }
 

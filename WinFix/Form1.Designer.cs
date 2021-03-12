@@ -80,7 +80,7 @@ namespace WinFix
             this.linkLabel1.Size = new System.Drawing.Size(167, 17);
             this.linkLabel1.TabIndex = 0;
             this.linkLabel1.TabStop = true;
-            this.linkLabel1.Text = "by Bob Vandevliet | v2021.02.11";
+            this.linkLabel1.Text = "by Bob Vandevliet | v2021.03.12";
             this.linkLabel1.UseCompatibleTextRendering = true;
             // 
             // RestoreCurrent

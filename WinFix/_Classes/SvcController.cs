@@ -47,20 +47,17 @@ static class Service
     public static bool EnableDisable(string serviceName, bool Enable, ServiceStartMode defaultStartMode, bool destroy = false)
     {
         /**
-         * Verify if the service exists or bail early ..
+         * Only continue if service exists.
          */
-        ServiceController serviceController =
-            ServiceController.GetServices().FirstOrDefault(sc => sc.ServiceName == serviceName);
-
-        if (serviceController == null)
+        if (ServiceController.GetServices().FirstOrDefault(sc => sc.ServiceName == serviceName) is ServiceController serviceController)
         {
-            return true;
+            using (serviceController)
+            {
+                return EnableDisable(serviceController, Enable, defaultStartMode, destroy);
+            }
         }
 
-        using (serviceController)
-        {
-            return EnableDisable(serviceController, Enable, defaultStartMode, destroy);
-        }
+        return true;
     }
 
     private static bool EnableDisable(ServiceController serviceController, bool Enable, ServiceStartMode defaultStartMode, bool destroy = false)
@@ -81,8 +78,7 @@ static class Service
                         if (Enable)
                         {
                             // Restore ImagePath ..
-                            string imagePath = (string)key.GetValue("ImagePath.bac");
-                            if (imagePath != null)
+                            if (key.GetValue("ImagePath.bac") is string imagePath)
                             {
                                 key.SetValue("ImagePath", imagePath);
                                 key.DeleteValue("ImagePath.bac");
@@ -91,8 +87,7 @@ static class Service
                         else if (destroy)
                         {
                             // Remove ImagePath ..
-                            string imagePath = (string)key.GetValue("ImagePath");
-                            if (imagePath != null)
+                            if (key.GetValue("ImagePath.bac") is string imagePath)
                             {
                                 key.SetValue("ImagePath.bac", imagePath);
                                 key.DeleteValue("ImagePath");
